@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "users")
+@NamedQueries({@NamedQuery(name = "User.getAll", query = "SELECT u FROM User u")})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

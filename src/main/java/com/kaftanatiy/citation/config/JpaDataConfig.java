@@ -2,13 +2,18 @@ package com.kaftanatiy.citation.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -16,6 +21,8 @@ import java.util.Properties;
  * Configuration class for Spring Data JPA
  */
 @Configuration
+@EnableTransactionManagement
+@EnableJpaRepositories(basePackages = "com.kaftanatiy.citation.repository")
 public class JpaDataConfig {
 
     /*@Bean
@@ -53,9 +60,17 @@ public class JpaDataConfig {
         emfb.setPackagesToScan("com.kaftanatiy.citation.entity");
 
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "create");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
         emfb.setJpaProperties(properties);
         return emfb;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory emf, DataSource dataSource) {
+        JpaTransactionManager tm = new JpaTransactionManager();
+        tm.setEntityManagerFactory(emf);
+        tm.setDataSource(dataSource);
+        return tm;
     }
 }
